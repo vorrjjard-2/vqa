@@ -1,31 +1,58 @@
-# vqa
+# TB Explanation Module
 
-A Python module that turns tuberculosis (TB) classifier outputs into natural-language descriptions by passing structured JSON to a fine-tuned LLM.
-
-## Motivation
-
-Image classifiers for TB produce structured outputs — confidence scores, bounding boxes, and labels — but clinicians and downstream systems often need natural-language summaries. This project bridges that gap: classifier output → structured JSON → LLM → human-readable text.
+Turns the output of our TB classification + detection model into a natural-language explanation of that output.
 
 ## Pipeline
 
 ```
-TB classifier  →  structured JSON  →  fine-tuned LLM  →  natural-language output
+CXR image
+  → TB detector (classifier + region detector)
+  → structured JSON
+  → fine-tuned LLM
+  → natural-language explanation
 ```
 
-Each classifier prediction is serialized into a JSON object with at minimum:
+The LLM never sees the image — only the structured detector output. This prevents the model from hallucinating findings that aren't actually in the detector's predictions.
 
-- `label` — predicted class
-- `confidence` — model confidence score
-- `bounding_boxes` — list of detected regions (when applicable)
+## Schema (draft)
 
-## Planned phases
+LLM input:
 
-1. **Schema definition** — settle on the JSON contract between classifier and LLM.
-2. **Dataset construction** — collect/curate pairs of `(structured JSON, desired text output)` for supervised fine-tuning.
-3. **Fine-tuning** — train an LLM on the JSON → text mapping.
-4. **Module API** — expose a clean Python interface so a classifier's output can be fed directly in.
-5. **Evaluation** — measure faithfulness, fluency, and clinical accuracy of generated text.
+```json
+{
+  "image_classification": {
+    "predicted_label": "tb",
+    "probabilities": {
+      "healthy": 0.05,
+      "sick_non_tb": 0.12,
+      "tb": 0.83
+    }
+  },
+  "regions": [
+    {
+      "type": "active_tb",
+      "confidence_band": "high",
+      "location": "upper_right"
+    }
+  ]
+}
+```
+
+- `predicted_label` ∈ {`healthy`, `sick_non_tb`, `tb`}
+- `type` ∈ {`active_tb`, `latent_tb`}
+- `confidence_band` ∈ {`low`, `medium`, `high`}
+- `location` is a string from a fixed anatomical vocabulary (currently a 3×3 grid over the lung field)
+- `regions` is `[]` when no detections
+
+## Plan
+
+1. Finalize schema.
+2. Build anatomical mapper (bbox → region string).
+3. Construct dataset: run detector on MIMIC-CXR, pair outputs with MIMIC Findings text, filter for grounding.
+4. Fine-tune a medical LLM (LoRA).
+5. Wire into the API.
+6. Evaluate faithfulness and readability.
 
 ## Status
 
-Early scaffolding. Schema, dataset format, and target LLM not yet decided.
+Early scaffolding. No code yet.
