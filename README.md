@@ -1,6 +1,6 @@
 # TB Explanation Module
 
-Turns the output of our TB classification + detection model into a natural-language explanation of that output.
+Turns the output of  TB classification + detection model into a natural-language explanation of that output.
 
 ## Pipeline
 
@@ -11,8 +11,6 @@ CXR image
   → fine-tuned LLM
   → natural-language explanation
 ```
-
-The LLM never sees the image — only the structured detector output. This prevents the model from hallucinating findings that aren't actually in the detector's predictions.
 
 ## Schema (draft)
 
@@ -43,16 +41,3 @@ LLM input:
 - `confidence_band` ∈ {`low`, `medium`, `high`}
 - `location` is a string from a fixed anatomical vocabulary (currently a 3×3 grid over the lung field)
 - `regions` is `[]` when no detections
-
-## Plan
-
-1. Finalize schema.
-2. Build anatomical mapper (bbox → region string).
-3. Construct dataset: run detector on MIMIC-CXR, pair outputs with MIMIC Findings text, filter for grounding.
-4. Fine-tune a medical LLM (LoRA).
-5. Wire into the API.
-6. Evaluate faithfulness and readability.
-
-## Status
-
-Early scaffolding. No code yet.
