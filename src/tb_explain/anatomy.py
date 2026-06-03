@@ -9,7 +9,6 @@ in lung-segmentation-aware logic later.
 
 from tb_explain.schema import Location
 
-# (x0, y0, x1, y1) in pixel space, top-left origin.
 BBox = tuple[float, float, float, float]
 
 

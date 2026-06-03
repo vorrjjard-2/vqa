@@ -15,6 +15,11 @@ dependencies = [
 [project.optional-dependencies]
 dataset = []
 training = []
+inference = [
+    "transformers>=4.43",
+    "torch>=2.0",
+    "accelerate>=0.30",
+]
 dev = [
     "pytest>=7",
     "ruff",

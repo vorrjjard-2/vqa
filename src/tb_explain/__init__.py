@@ -2,6 +2,7 @@
 
 from tb_explain.adapter import adapt, confidence_to_band
 from tb_explain.anatomy import BBox, bbox_to_location
+from tb_explain.inference import explain
 from tb_explain.schema import (
     ConfidenceBand,
     DetectorOutput,
@@ -24,4 +25,5 @@ __all__ = [
     "adapt",
     "bbox_to_location",
     "confidence_to_band",
+    "explain",
 ]
