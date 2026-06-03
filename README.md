@@ -1,6 +1,8 @@
 # TB Explanation Module
 
-Turns the output of  TB classification + detection model into a natural-language explanation of that output.
+Turns the output of a TB classification + detection model into a natural-language explanation of that output.
+
+The public API is two functions: `adapt()` (raw detector output → validated JSON contract) and `explain()` (JSON contract → natural-language summary).
 
 ## Pipeline
 

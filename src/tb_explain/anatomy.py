@@ -1,11 +1,4 @@
-"""Bounding box -> anatomical region string.
-
-Current vocabulary: 3x3 grid (`upper|middle|lower` x `left|center|right`).
-
-Naive implementation: grids over the full image bounds, not a segmented lung
-field. Good enough as a starting point if inputs are already lung-cropped; swap
-in lung-segmentation-aware logic later.
-"""
+"""Bounding box -> anatomical region string (3x3 grid)."""
 
 from tb_explain.schema import Location
 

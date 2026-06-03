@@ -18,11 +18,12 @@ SYSTEM_PROMPT = (
     "Do not invent findings beyond what the JSON contains."
 )
 
+
 def _format_user_message(output: DetectorOutput) -> str:
     return (
         "TB detector output:\n"
         + output.model_dump_json(indent=2)
-        + "\n\nSummarise these findings in plain clinical language."
+        + "\n\nSummarise these findings in plain clinical language, as concise as possible."
     )
 
 
@@ -30,9 +31,6 @@ def _format_user_message(output: DetectorOutput) -> str:
 def _load_pipeline() -> "Pipeline":
     from transformers import pipeline
 
-    # Use the native transformers Phi3 architecture rather than the model's
-    # bundled remote code: the Hub copy of modeling_phi3.py still references
-    # the removed DynamicCache.seen_tokens attribute and breaks on generate().
     return pipeline(
         "text-generation",
         model=MODEL_ID,
@@ -50,5 +48,4 @@ def explain(output: DetectorOutput, max_new_tokens: int = 200) -> str:
         {"role": "user", "content": _format_user_message(output)},
     ]
     result = pipe(messages, max_new_tokens=max_new_tokens)
-    # pipeline returns the full conversation; last entry is the assistant turn
     return result[0]["generated_text"][-1]["content"].strip()

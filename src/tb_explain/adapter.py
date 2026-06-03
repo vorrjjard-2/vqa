@@ -1,11 +1,4 @@
-"""Raw detector output -> DetectorOutput (the LLM input contract).
-
-Responsibilities:
-  1. argmax over per-class probabilities to pick `predicted_label`.
-  2. Bucket raw [0, 1] detection confidences into low / medium / high bands.
-  3. Map pixel-space bboxes to anatomical region strings via `anatomy`.
-  4. Assemble and validate the final `DetectorOutput`.
-"""
+"""Raw detector output -> DetectorOutput (the LLM input contract)."""
 
 from tb_explain.anatomy import BBox, bbox_to_location
 from tb_explain.schema import (
@@ -17,7 +10,6 @@ from tb_explain.schema import (
     RegionType,
 )
 
-# Thresholds are inclusive on the lower bound: conf >= HIGH -> "high", etc.
 DEFAULT_BAND_THRESHOLDS: tuple[float, float] = (0.5, 0.8)
 
 
@@ -39,15 +31,7 @@ def adapt(
     image_size: tuple[int, int],
     band_thresholds: tuple[float, float] = DEFAULT_BAND_THRESHOLDS,
 ) -> DetectorOutput:
-    """Build a validated `DetectorOutput` from raw detector outputs.
-
-    Args:
-        probabilities: per-class probabilities from the classification head.
-        detections: list of `(bbox, region_type, raw_confidence)` from the
-            detection head. `bbox` is `(x0, y0, x1, y1)` in pixel space.
-        image_size: `(width, height)` in pixels, used by the bbox -> region mapper.
-        band_thresholds: `(low_cut, high_cut)` cutoffs for confidence banding.
-    """
+    """Build a validated `DetectorOutput` from raw detector outputs."""
     predicted_label = max(probabilities, key=probabilities.__getitem__)
 
     regions = [
