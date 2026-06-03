@@ -2,7 +2,17 @@
 
 Turns the output of a TB classification + detection model into a natural-language explanation of that output.
 
-The public API is two functions: `adapt()` (raw detector output → validated JSON contract) and `explain()` (JSON contract → natural-language summary).
+The public API is composed of : `adapt()` (raw detector output to validated JSON obj) and `explain()` (JSON obj to natural-language summary).
+
+## Install
+
+```bash
+# Core (adapt only)
+uv pip install -e .
+
+# With the LLM backend (required for explain)
+uv pip install -e ".[inference]"
+```
 
 ## Pipeline
 
